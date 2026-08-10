@@ -2,7 +2,7 @@
 
 ## 📌 Datos personales
 - Nombre: Kevin Oswaldo Rivera Sánchez
-- Carné: 5612
+- Carné: 9941-25-612
 - Curso: Programación II
 - Sección: C
 
