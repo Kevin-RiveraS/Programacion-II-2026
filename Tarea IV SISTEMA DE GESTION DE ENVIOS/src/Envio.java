@@ -65,8 +65,10 @@ public class Envio {
             System.out.println("Destinatario: " + this.destinatario);
             System.out.println("Peso del paquete: " + this.peso + " kg");
             System.out.println("Costo base: Q" + calcularCostoBase());
+            System.out.println("Costo final: Q" + calcularCostoFinal());
         } else {
             mostrarResumen();
         }
     }
 }
+
