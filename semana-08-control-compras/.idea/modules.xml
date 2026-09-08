@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/evidencias/evidencias.iml" filepath="$PROJECT_DIR$/evidencias/evidencias.iml" />
+      <module fileurl="file://$PROJECT_DIR$/semana-08-control-compras.iml" filepath="$PROJECT_DIR$/semana-08-control-compras.iml" />
+    </modules>
+  </component>
+</project>
