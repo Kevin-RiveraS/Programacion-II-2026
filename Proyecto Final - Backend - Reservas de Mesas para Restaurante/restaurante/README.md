@@ -96,6 +96,7 @@ El sistema maneja dos entidades principales:
 
 ##  Evidencias y Pruebas (Postman)
 
+
 El proyecto incluye datos de prueba precargados en PostgreSQL:
 * **Entidad Principal (Mesa):** 10 registros activos.
 * **Entidad de Apoyo (Reserva):** 5 reservaciones registradas.
