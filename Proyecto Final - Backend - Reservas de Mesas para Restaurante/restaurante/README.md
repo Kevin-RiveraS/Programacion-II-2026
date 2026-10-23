@@ -38,7 +38,70 @@ spring.jpa.show-sql=true
 ---
 ##
 
+# Sistema de Gestión de Reservas de Restaurante "operaciones del backend"
+
+API REST desarrollada en Java con **Spring Boot** y **PostgreSQL** para la gestión de mesas y reservaciones en un restaurante. Este proyecto forma parte de la entrega académica de desarrollo backend.
+
+## Tecnologías Utilizadas
+
+* **Lenguaje:** Java 17+
+* **Framework:** Spring Boot
+* **Persistencia:** Spring Data JPA / Hibernate
+* **Base de Datos:** PostgreSQL
+* **Pruebas de API:** Postman
+
 ---
+
+## ️Modelo de Base de Datos
+
+El sistema maneja dos entidades principales:
+
+1. **Mesa (`Entity`):**
+   * `id` (PK, Autoincremental)
+   * `numeroMesa` (Único)
+   * `capacidad`
+   * `ubicacion`
+   * `activa` (Boolean)
+
+2. **Reserva (`Entity`):**
+   * `id` (PK, Autoincremental)
+   * `nombreCliente`
+   * `telefonoCliente`
+   * `fecha`
+   * `hora`
+   * `cantidadPersonas`
+   * `estado`
+   * `mesa` (Relación `@ManyToOne` con Mesa)
+
+---
+
+##  Endpoints Principales
+
+### Mesas (`/api/mesas`)
+* `POST /api/mesas` - Registra una nueva mesa.
+`GET /api/mesas` - Obtiene el listado completo de mesas.
+
+### Reservas (`/api/reservas`)
+* `POST /api/reservas` - Registra una nueva reservación asociada a una mesa existente.
+* `GET /api/reservas` - Obtiene el listado de reservaciones.
+
+---
+
+## Validaciones y Reglas de Negocio
+
+1. **El Número de Mesa:** No se permite el registro de dos mesas con el mismo `numeroMesa`.
+2. **Control de Duplicidad en Reservas:** El sistema previene el solapamiento de reservaciones bloqueando múltiples reservas para la misma mesa en una misma fecha y hora.
+
+---
+
+##  Evidencias y Pruebas (Postman)
+
+El proyecto incluye datos de prueba precargados en PostgreSQL:
+* **Entidad Principal (Mesa):** 10 registros activos.
+* **Entidad de Apoyo (Reserva):** 5 reservaciones registradas.
+
+---
+
 > Autor: Kevin Oswaldo Rivera Sánchez                                                                     
 > Carné: 9941-25-612
 ---
