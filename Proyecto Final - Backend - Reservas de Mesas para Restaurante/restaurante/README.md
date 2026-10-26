@@ -59,7 +59,7 @@ El proyecto se encuentra organizado bajo una arquitectura limpia por paquetes:
 El proyecto incluye datos de prueba precargados en PostgreSQL:
 * **Entidad Principal (Mesa): 10 registros iniciales**.
 * **Entidad de Apoyo (Reserva) 05 registros iniciales**.
-* **Ingresar: http://localhost:8080/api/mesas o http://localhost:8080/api/reservas para realizar las pruebas**.
+* **Ingresar: http://localhost:8080/api/mesas para realizar las pruebas**.
 
 ---
 > Autor: Kevin Oswaldo Rivera Sánchez                                                                     
