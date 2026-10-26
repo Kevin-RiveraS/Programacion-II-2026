@@ -1,6 +1,6 @@
-# Sistema de Reservas de Restaurante - Avance 1
+# Sistema de Reservas de Restaurante 
 
-Proyecto backend desarrollado en **Spring Boot (Java 17)** y **PostgreSQL** para la gestión de mesas y reservas de un restaurante, correspondiente al primer avance del curso.
+Proyecto backend y frontend desarrollado en **Spring Boot (Java 17)** y **PostgreSQL** para la gestión de mesas y reservas de un restaurante, correspondiente al primer avance del curso.
 
 >Descripción: "SITUACIÓN: Un restaurante pequeño necesita administrar sus mesas y las reservaciones de los clientes. El sistema debe impedir reservaciones incompatibles y facilitar la consulta de mesas disponibles.
 ENTIDADES Y RELACIÓN: Mesa y Reserva. Una mesa puede tener muchas reservas en diferentes horarios.
@@ -15,94 +15,53 @@ Este sistema permite administrar la disponibilidad de mesas y el registro de res
 ## ️ Tecnologías Utilizadas
 * **Java 17**
 * **Spring Boot**
-* **Spring Data JPA**
+* **Spring Data JPA / Hibernate**
 * **PostgreSQL**
 * **Maven**
-
-## Modelo de Datos (Entidades)
-El sistema cuenta con dos entidades principales relacionadas mediante una asociación de muchos a uno (`@ManyToOne`):
-1. **Mesa:** `id`, `numeroMesa`, `capacidad`, `ubicacion`, `activa`.
-2. **Reserva:** `id`, `nombreCliente`, `telefonoCliente`, `fecha`, `hora`, `cantidadPersonas`, `estado`.
-
-## Configuración y Conexión a Base de Datos
-La conexión con PostgreSQL se configura en el archivo `src/main/resources/application.properties`:
-
-```properties
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/restaurante_db
-spring.datasource.username=postgres
-spring.datasource.password=tu_contraseña
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-```
----
-##
-
-# Sistema de Gestión de Reservas de Restaurante "operaciones del backend"
-
-API REST desarrollada en Java con **Spring Boot** y **PostgreSQL** para la gestión de mesas y reservaciones en un restaurante. Este proyecto forma parte de la entrega académica de desarrollo backend.
-
-## Tecnologías Utilizadas
-
-* **Lenguaje:** Java 17+
-* **Framework:** Spring Boot
-* **Persistencia:** Spring Data JPA / Hibernate
-* **Base de Datos:** PostgreSQL
-* **Pruebas de API:** Postman
+* **Frontend: HTML, CSS Y JavaScript**
+* **Pruebas en Postman**
 
 ---
 
-## ️Modelo de Base de Datos
-
-El sistema maneja dos entidades principales:
-
-1. **Mesa (`Entity`):**
-   * `id` (PK, Autoincremental)
-   * `numeroMesa` (Único)
-   * `capacidad`
-   * `ubicacion`
-   * `activa` (Boolean)
-
-2. **Reserva (`Entity`):**
-   * `id` (PK, Autoincremental)
-   * `nombreCliente`
-   * `telefonoCliente`
-   * `fecha`
-   * `hora`
-   * `cantidadPersonas`
-   * `estado`
-   * `mesa` (Relación `@ManyToOne` con Mesa)
+## Arquitectura del Sistema
+El proyecto se encuentra organizado bajo una arquitectura limpia por paquetes:
+* `controller`: Controladores REST que exponen los endpoints (`/api/mesas`, `/api/reservas`).
+* `service`: Contiene la lógica de negocio y validaciones del sistema.
+* `repository`: Interfaces de Spring Data JPA para la persistencia en PostgreSQL.
+* `entity`: Clases de persistencia mapeadas a la base de datos.
+* `dto`: Objetos de transferencia de datos con anotaciones de validación (`@Valid`).
+* `exception`: Manejador global de excepciones (`GlobalExceptionHandler`) para respuestas centralizadas (400, 404, 500).
 
 ---
-
-##  Endpoints Principales
-
-### Mesas (`/api/mesas`)
-* `POST /api/mesas` - Registra una nueva mesa.
-`GET /api/mesas` - Obtiene el listado completo de mesas.
-
-### Reservas (`/api/reservas`)
-* `POST /api/reservas` - Registra una nueva reservación asociada a una mesa existente.
-* `GET /api/reservas` - Obtiene el listado de reservaciones.
+## Modelo de Base de Datos
+1. **Mesa:** `id` (PK), `numeroMesa` (Único), `capacidad`, `ubicacion`, `activa`.
+2. **Reserva:** `id` (PK), `nombreCliente`, `telefonoCliente`, `fecha`, `hora`, `cantidadPersonas`, `estado`, `mesa_id` (FK).
 
 ---
+## Instrucciones para Ejecutar el Backend
 
-## Validaciones y Reglas de Negocio
+1. **Abrir el proyecto:**
+   Abre tu entorno de desarrollo (IDE) favorito, como IntelliJ IDEA, y carga el proyecto como un proyecto Maven existente.
 
-1. **El Número de Mesa:** No se permite el registro de dos mesas con el mismo `numeroMesa`.
-2. **Control de Duplicidad en Reservas:** El sistema previene el solapamiento de reservaciones bloqueando múltiples reservas para la misma mesa en una misma fecha y hora.
+2. **Configurar la Base de Datos:**
+   Asegúrate de tener PostgreSQL activo en tu computadora y crea una base de datos con el nombre `restaurante_db`. Verifica que tus credenciales (usuario y contraseña) en el archivo `src/main/resources/application.properties` coincidan con las de tu entorno local.
 
+3. **Ejecutar la Aplicación:**
+   Busca la clase principal del proyecto llamada **`RestauranteApplication.java`** (normalmente ubicada en el paquete principal de `src/main/java`). Haz clic derecho sobre ella y selecciona la opción de ejecutar (**Run**).
+
+4. **Verificar el Servidor:**
+   Una vez que la consola indique que Spring Boot ha iniciado correctamente, la API REST estará disponible y escuchando en el puerto por defecto:
+   `http://localhost:8080`
 ---
-
 ##  Evidencias y Pruebas (Postman)
 
 
 El proyecto incluye datos de prueba precargados en PostgreSQL:
-* **Entidad Principal (Mesa):** 10 registros activos.
-* **Entidad de Apoyo (Reserva):** 5 reservaciones registradas.
+* **Entidad Principal (Mesa): 10 registros iniciales**.
+* **Entidad de Apoyo (Reserva) 05 registros iniciales**.
+* **Ingresar: http://localhost:8080/api/mesas o http://localhost:8080/api/reservas para realizar las pruebas**.
 
 ---
-
 > Autor: Kevin Oswaldo Rivera Sánchez                                                                     
 > Carné: 9941-25-612
 ---
