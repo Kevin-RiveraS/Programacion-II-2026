@@ -38,10 +38,9 @@ public class Reserva {
     private Mesa mesa;
 
 
-
-
     public Reserva() {
     }
+
 
     public Reserva(String nombreCliente, String telefonoCliente, LocalDate fecha, LocalTime hora, Integer cantidadPersonas, String estado, Mesa mesa) {
         this.nombreCliente = nombreCliente;
@@ -66,6 +65,7 @@ public class Reserva {
     }
 
     public String getNombreCliente() {
+
         return nombreCliente;
     }
 
@@ -74,6 +74,7 @@ public class Reserva {
     }
 
     public String getTelefonoCliente() {
+
         return telefonoCliente;
     }
 

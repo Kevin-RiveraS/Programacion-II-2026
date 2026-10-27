@@ -38,4 +38,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> manejarExcepcionRuntime(RuntimeException ex) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("estado", 400);
+        respuesta.put("mensaje", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
 }
