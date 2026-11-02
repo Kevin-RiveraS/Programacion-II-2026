@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurante - Panel de Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f9; color: #333; }
+        h1 { color: #2c3e50; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button { padding: 8px 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px; margin-top: 5px;}
+        button:hover { background: #2980b9; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        pre { background: #eef; padding: 10px; border-radius: 4px; max-height: 350px; overflow-y: auto; }
+        input, select { padding: 6px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        .alert-success { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 10px; display: none; }
+        .alert-error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-bottom: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<h1>Sistema de Gestión de Restaurante </h1>
+
+
+
+<div id="msgSuccess" class="alert-success"></div>
+<div id="msgError" class="alert-error"></div>
+
+
+
+<div class="card">
+    <h3>Registrar Nueva Reserva</h3>
+    <form id="formReserva" onsubmit="registrarReserva(event)">
+        <label>Fecha:</label>
+        <input type="date" id="regFecha" required>
+        <label>Hora:</label>
+        <input type="time" id="regHora" required>
+        <label>Cantidad de Personas:</label>
+        <input type="number" id="regPersonas" required min="1">
+        <label>ID de Mesa:</label>
+        <input type="number" id="regMesaId" required>
+        <label>Nombre del Cliente:</label>
+        <input type="text" id="regNombre" required>
+        <label>Teléfono (8 dígitos):</label>
+        <input type="text" id="regTelefono" required pattern="\d{8}">
+        <label>Estado (PENDIENTE / CONFIRMADA):</label>
+        <input type="text" id="regEstado" value="pendiente" required>
+        <button type="submit">Guardar Reserva</button>
+    </form>
+</div>
+
+
+
+<div class="card">
+    <h3>Cancelar Reserva</h3>
+    <label>ID de la Reserva a Cancelar:</label>
+    <input type="number" id="cancelId">
+    <button class="btn-danger" onclick="cancelarReserva()">Cancelar Reserva</button>
+</div>
+
+
+
+<div class="card">
+    <h3>Modificar Reserva (Actualizar)</h3>
+    <label>ID de la Reserva a Modificar:</label>
+    <input type="number" id="modId" required>
+    <label>Nueva Fecha:</label>
+    <input type="date" id="modFecha" required>
+    <label>Nueva Hora:</label>
+    <input type="time" id="modHora" required>
+    <label>Nueva Cantidad de Personas:</label>
+    <input type="number" id="modPersonas" required min="1">
+    <label>Nuevo ID de Mesa:</label>
+    <input type="number" id="modMesaId" required>
+    <label>Nuevo Nombre:</label>
+    <input type="text" id="modNombre" required>
+    <label>Nuevo Teléfono:</label>
+    <input type="text" id="modTelefono" required pattern="\d{8}">
+    <label>Nuevo Estado:</label>
+    <input type="text" id="modEstado" value="CONFIRMADA" required>
+    <button onclick="modificarReserva()">Modificar Reserva</button>
+</div>
+
+
+
+<div class="card">
+    <h3>Gestión de Mesas y Reservas</h3>
+    <button onclick="cargarMesas()">Listar Todas las Mesas</button>
+    <button onclick="cargarReservas()">Listar Todas las Reservas</button>
+    <pre id="respDatos">Haz clic en un botón para ver los datos...</pre>
+</div>
+
+
+
+<div class="card">
+    <h3>Indicadores y Consultas (Filtro por Fecha)</h3>
+    <label for="inputFecha">Selecciona la fecha:</label>
+    <input type="date" id="inputFecha">
+    <button onclick="cargarOcupacion()">Ver Ocupación Estimada</button>
+    <pre id="respIndicador">Haz clic para ver el indicador...</pre>
+</div>
+
+<script>
+    function mostrarExito(texto) {
+        const el = document.getElementById('msgSuccess');
+        el.textContent = texto;
+        el.style.display = 'block';
+        document.getElementById('msgError').style.display = 'none';
+        setTimeout(() => el.style.display = 'none', 30000);
+    }
+
+    function mostrarError(texto) {
+        const el = document.getElementById('msgError');
+        el.textContent = texto;
+        el.style.display = 'block';
+        document.getElementById('msgSuccess').style.display = 'none';
+        setTimeout(() => el.style.display = 'none', 30000);
+    }
+
+    function cargarMesas() {
+        fetch('http://localhost:8080/api/mesas')
+            .then(res => res.json())
+            .then(data => document.getElementById('respDatos').textContent = JSON.stringify(data, null, 2))
+            .catch(err => mostrarError('Error al cargar mesas: ' + err));
+    }
+
+    function cargarReservas() {
+        fetch('http://localhost:8080/api/reservas')
+            .then(res => res.json())
+            .then(data => document.getElementById('respDatos').textContent = JSON.stringify(data, null, 2))
+            .catch(err => mostrarError('Error al cargar reservas: ' + err));
+    }
+
+    function cargarOcupacion() {
+        const fechaSeleccionada = document.getElementById('inputFecha').value;
+        if (!fechaSeleccionada) {
+            mostrarError('Por favor selecciona una fecha.');
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/reservas/ocupacion?fecha=${fechaSeleccionada}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Error al obtener la ocupación');
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById('respIndicador').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(err => mostrarError(err.message));
+    }
+
+    function registrarReserva(event) {
+        event.preventDefault();
+        const data = {
+            fecha: document.getElementById('regFecha').value,
+            hora: document.getElementById('regHora').value,
+            cantidadPersonas: parseInt(document.getElementById('regPersonas').value),
+            mesaId: parseInt(document.getElementById('regMesaId').value),
+            nombreCliente: document.getElementById('regNombre').value,
+            telefonoCliente: document.getElementById('regTelefono').value,
+            estado: document.getElementById('regEstado').value
+        };
+
+        fetch('http://localhost:8080/api/reservas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(async res => {
+                const json = await res.json();
+                if (!res.ok) {
+
+
+                    let mensaje = json.message || JSON.stringify(json);
+                    throw new Error(mensaje);
+                }
+                return json;
+            })
+            .then(resp => {
+                mostrarExito('¡Reserva registrada con éxito!');
+                cargarReservas();
+            })
+            .catch(err => mostrarError('Error de validación / API: ' + err.message));
+    }
+
+    function cancelarReserva() {
+        const id = document.getElementById('cancelId').value;
+        if (!id) {
+            mostrarError('Ingresa un ID válido para cancelar.');
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/reservas/${id}/cancelar`, {
+            method: 'PATCH'
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || 'No se pudo cancelar la reserva');
+                }
+                mostrarExito(`¡Reserva con ID ${id} cancelada exitosamente!`);
+                cargarReservas();
+            })
+            .catch(err => mostrarError('Error: ' + err.message));
+    }
+
+    function modificarReserva() {
+        const id = document.getElementById('modId').value;
+        if (!id) {
+            mostrarError('Ingresa un ID válido para modificar.');
+            return;
+        }
+        const data = {
+            fecha: document.getElementById('modFecha').value,
+            hora: document.getElementById('modHora').value,
+            cantidadPersonas: parseInt(document.getElementById('modPersonas').value),
+            mesaId: parseInt(document.getElementById('modMesaId').value),
+            nombreCliente: document.getElementById('modNombre').value,
+            telefonoCliente: document.getElementById('modTelefono').value,
+            estado: document.getElementById('modEstado').value
+        };
+
+        fetch(`http://localhost:8080/api/reservas/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(async res => {
+                const json = await res.json();
+                if (!res.ok) {
+                    throw new Error(json.message || JSON.stringify(json));
+                }
+                return json;
+            })
+            .then(resp => {
+                mostrarExito(`¡Reserva con ID ${id} modificada con éxito!`);
+                cargarReservas();
+            })
+            .catch(err => mostrarError('Error al modificar: ' + err.message));
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+package com.ejemplo.restaurante.repository;
+
+import com.ejemplo.restaurante.entity.Reserva;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+@Repository
+public interface ReservaRepository extends JpaRepository<Reserva, Long> {
+
+
+
+
+    List<Reserva> findByFecha(LocalDate fecha);
+
+
+
+    List<Reserva> findByMesaIdAndFecha(Long mesaId, LocalDate fecha);
+
+
+
+    List<Reserva> findByTelefonoCliente(String telefonoCliente);
+
+    boolean existsByMesaIdAndFechaAndHoraAndEstadoNotAndIdNot(Long mesaId, LocalDate fecha, LocalTime hora, String estado, Long id);
+
+    boolean existsByMesaIdAndFechaAndHoraAndEstadoNot(Long mesaId, LocalDate fecha, LocalTime hora, String estado);
+
+
+    @Query("SELECT COUNT(DISTINCT r.mesa.id) FROM Reserva r WHERE r.fecha = :fecha AND r.estado != 'CANCELADA'")
+    long contarMesasReservadasPorFecha(@Param("fecha") LocalDate fecha);
+}
+

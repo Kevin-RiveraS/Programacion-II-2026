@@ -14,6 +14,8 @@ CREATE TABLE reserva (
     hora TIME NOT NULL,
     cantidad_personas INT NOT NULL,
     estado VARCHAR(20) NOT NULL DEFAULT 'CONFIRMADA',
-    mesa_id INT NOT NULL,
-    CONSTRAINT fk_reserva_mesa FOREIGN KEY (mesa_id) REFERENCES mesa(id) ON DELETE CASCADE
+    mesa_id BIGINT NOT NULL,
+    CONSTRAINT fk_reserva_mesa FOREIGN KEY (mesa_id) REFERENCES mesa(id)
 );
+
+

@@ -21,7 +21,7 @@ public class Mesa {
     private String ubicacion;
 
     @Column(nullable = false)
-    private Boolean activa = true;
+    private Boolean activa;
 
 
 
