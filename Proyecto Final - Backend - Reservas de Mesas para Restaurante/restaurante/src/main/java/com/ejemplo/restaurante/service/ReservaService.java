@@ -8,26 +8,26 @@ import com.ejemplo.restaurante.exception.ConflictException;
 import com.ejemplo.restaurante.exception.RecursoNoEncontradoException;
 import com.ejemplo.restaurante.repository.MesaRepository;
 import com.ejemplo.restaurante.repository.ReservaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ejemplo.restaurante.dto.ReservaActualizarDTO;
 
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservaService {
 
-    @Autowired
-    private ReservaRepository reservaRepository;
+    private final ReservaRepository reservaRepository;
+    private final MesaRepository mesaRepository;
 
-    @Autowired
-    private MesaRepository mesaRepository;
-
-    public List<Reserva> listarReservas() {
+    public ReservaService(ReservaRepository reservaRepository, MesaRepository mesaRepository){
+        this.reservaRepository = reservaRepository;
+        this.mesaRepository = mesaRepository;
+    }
+    public List<Reserva> listarReservas(){
         return reservaRepository.findAll();
     }
 
@@ -188,6 +188,18 @@ public class ReservaService {
         Reserva reserva =obtenerPorId(id);
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
+    }
+
+    public List<Reserva> listarReservasConfirmadas(){
+        return reservaRepository.findAll().stream()
+                .filter(r -> "CONFIRMADA".equalsIgnoreCase(r.getEstado()))
+                .collect(Collectors.toList());
+    }
+
+    public long contarReservasActivas(){
+        return reservaRepository.findAll().stream()
+                .filter(r -> !"CANCELADA".equalsIgnoreCase(r.getEstado()))
+                .count();
     }
 
     public List<Mesa> obtenerMesasDisponibles(LocalDate fecha, LocalTime hora) {

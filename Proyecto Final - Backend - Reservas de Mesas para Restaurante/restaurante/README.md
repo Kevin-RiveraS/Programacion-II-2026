@@ -1,12 +1,15 @@
 # Sistema de Reservas de Restaurante
 
 
->Descripción: "SITUACIÓN": Un restaurante pequeño necesita administrar sus mesas y las reservaciones de los clientes. El sistema debe impedir reservaciones incompatibles y facilitar la consulta de mesas disponibles.
-ENTIDADES Y RELACIÓN: Mesa y Reserva. Una mesa puede tener muchas reservas en diferentes horarios.
-REGLAS PRINCIPALES:
-1. La cantidad de personas no puede superar la capacidad de la mesa.
-2. No permitir dos reservas activas para la misma mesa, fecha y hora.
-3. Manejar los estados confirmada, atendida y cancelada.
+>"SITUACIÓN": Un restaurante pequeño necesita administrar sus mesas y las reservaciones de los clientes.
+>## El problema:
+>Los restaurantes pequeños a menudo sufren para organizar sus mesas manualmente, lo que causa confusiones, llamadas perdidas, errores al anotar y sobreventa de espacios (dos grupos para la misma mesa a la misma hora). 
+>¿Qué debe hacer el sistema para solucionarlo? 
+> ## El alcance y regla:
+>La aplicación automatiza este proceso permitiendo registrar mesas, controlar capacidades máximas, consultar disponibilidad en tiempo real y evitar cruces de horarios o duplicidad de reservas.
+>1. La cantidad de personas no puede superar la capacidad de la mesa.
+>2. No permitir dos reservas activas para la misma mesa, fecha y hora.
+>3. Manejar los estados confirmada, atendida y cancelada.
    CONSULTAS E INDICADOR: Reservas por fecha, mesas disponibles, reservas confirmadas y ocupación estimada del día.
 ##  Descripción del Proyecto
 Este sistema permite administrar la disponibilidad de mesas y el registro de reservaciones de los clientes mediante una arquitectura limpia basada en capas y persistencia con JPA/Hibernate.
@@ -26,12 +29,59 @@ Este sistema permite administrar la disponibilidad de mesas y el registro de res
    ```sql
    CREATE DATABASE restaurante_db;
    ```
+2. **Script de Creación de Tablas:**
 
+    Ejecuta el siguiente script para crear la estructura relacional del sistema: 
 
+```
+CREATE TABLE mesa (
+id BIGSERIAL PRIMARY KEY,
+numero_mesa INT NOT NULL UNIQUE,
+capacidad INT NOT NULL,
+ubicacion VARCHAR(50) NOT NULL,
+activa BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE reserva (
+id BIGSERIAL PRIMARY KEY,
+nombre_cliente VARCHAR(100) NOT NULL,
+telefono_cliente VARCHAR(20) NOT NULL,
+fecha DATE NOT NULL,
+hora TIME NOT NULL,
+cantidad_personas INT NOT NULL,
+estado VARCHAR(20) NOT NULL DEFAULT 'CONFIRMADA',
+mesa_id BIGINT NOT NULL,
+CONSTRAINT fk_reserva_mesa FOREIGN KEY (mesa_id) REFERENCES mesa(id)
+);
+```
 ---
 ## Modelo de Base de Datos
-1. **Mesa:** `id` (PK), `numeroMesa` (Único), `capacidad`, `ubicacion`, `activa`.
-2. **Reserva:** `id` (PK), `nombreCliente`, `telefonoCliente`, `fecha`, `hora`, `cantidadPersonas`, `estado`, `mesa_id` (FK).
+El sistema maneja una relación de uno a muchos entre mesa y reserva, a continuación se detalla la estructura de cada tabla:
+### Tabla: `mesa`
+
+| Columna | Tipo de Dato | Restricción / Atributo | Descripción                                     |
+| :--- | :--- | :--- |:------------------------------------------------|
+| `id` | `BIGSERIAL` | Primary Key | Identificador único autoincremental.            |
+| `numero_mesa` | `INT` | `NOT NULL`, `UNIQUE` | Número físico asignado a la mesa.               |
+| `capacidad` | `INT` | `NOT NULL` | Cantidad máxima de personas que soporta.        |
+| `ubicacion` | `VARCHAR(50)` | `NOT NULL` | Zona del restaurante, seria Salón, Terraza etc. |
+| `activa` | `BOOLEAN` | `DEFAULT TRUE` | Estado operativo de la mesa.                    |
+
+
+### Tabla: `reserva`
+
+| Columna | Tipo de Dato | Restricción / Atributo | Descripción                                                         |
+| :--- | :--- | :--- |:--------------------------------------------------------------------|
+| `id` | `BIGSERIAL` | Primary Key | Identificador único de la reserva.                                  |
+| `nombre_cliente` | `VARCHAR(100)` | `NOT NULL` | Nombre completo de la persona que reserva.                          |
+| `telefono_cliente` | `VARCHAR(20)` | `NOT NULL` | Teléfono de contacto del cliente.                                   |
+| `fecha` | `DATE` | `NOT NULL` | Fecha programada para la reserva.                                   |
+| `hora` | `TIME` | `NOT NULL` | Hora exacta de la reservación.                                      |
+| `cantidad_personas`| `INT` | `NOT NULL` | Número de asistentes confirmados.                                   |
+| `estado` | `VARCHAR(20)` | `DEFAULT 'CONFIRMADA'` | Estado actual (*CONFIRMADA*, *PENDIENTE*, *ATENDIDA*, *CANCELADA*). |
+| `mesa_id` | `BIGINT` | Foreign Key (`mesa`) | Llave foránea que enlaza con la mesa asignada.                      |
+
+
 ---
 ## Arquitectura del Sistema
 El proyecto se encuentra organizado bajo una arquitectura limpia por paquetes:
@@ -41,7 +91,7 @@ El proyecto se encuentra organizado bajo una arquitectura limpia por paquetes:
 * `entity`: Clases de persistencia mapeadas a la base de datos.
 * `dto`: Objetos de transferencia de datos con anotaciones de validación (`@Valid`).
 * `exception`: Manejador global de excepciones (`GlobalExceptionHandler`) para respuestas centralizadas (400, 404, 500).
-
+* `PostgreSQL`: Base de Datos.
 ---
 ## Instrucciones para Ejecutar el Backend
 
@@ -60,7 +110,7 @@ El proyecto se encuentra organizado bajo una arquitectura limpia por paquetes:
 ---
 
 ## Endpoints y Pruebas Realizadas en Postman
-​El proyecto cuenta con las siguientes pruebas funcionales ejecutadas y validadas mediante Postman:
+El proyecto cuenta con las siguientes pruebas funcionales ejecutadas y validadas mediante Postman:
 >>http://localhost:8080/api/mesas y http://localhost:8080/api/reservas
 
 ## Pruebas y Evidencias en Postman

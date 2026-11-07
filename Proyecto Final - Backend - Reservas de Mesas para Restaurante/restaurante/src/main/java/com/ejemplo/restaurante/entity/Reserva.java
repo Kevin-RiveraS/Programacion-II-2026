@@ -1,6 +1,7 @@
 package com.ejemplo.restaurante.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -31,8 +32,7 @@ public class Reserva {
     private String estado = "CONFIRMADA";
 
 
-
-
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "mesa_id", nullable = false)
     private Mesa mesa;

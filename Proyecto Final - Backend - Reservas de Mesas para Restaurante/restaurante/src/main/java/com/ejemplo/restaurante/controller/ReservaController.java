@@ -103,8 +103,7 @@ public class ReservaController {
 
     @GetMapping("/confirmadas")
     public ResponseEntity<Map<String, Object>> obtenerReservasConfirmadas() {
-        List<ReservaResponseDTO> lista = reservaService.listarReservas().stream()
-                .filter(r -> "CONFIRMADA".equalsIgnoreCase(r.getEstado()))
+        List<ReservaResponseDTO> lista = reservaService.listarReservasConfirmadas().stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
 
@@ -116,9 +115,7 @@ public class ReservaController {
 
     @GetMapping("/disponibilidad")
     public ResponseEntity<Map<String, Object>> verificarDisponibilidadGeneral() {
-        long totalReservasActivas = reservaService.listarReservas().stream()
-                .filter(r -> !"CANCELADA".equalsIgnoreCase(r.getEstado()))
-                .count();
+        long totalReservasActivas = reservaService.contarReservasActivas();
 
         Map<String, Object> respuesta = new LinkedHashMap<>();
         respuesta.put("mensaje", "¡Disponibilidad general verificada con éxito!");
